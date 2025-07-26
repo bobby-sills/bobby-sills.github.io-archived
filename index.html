@@ -1,39 +1,104 @@
 <!DOCTYPE html>
-<html lang="en" data-bs-theme="auto">
+<html lang="en" data-theme="dark">
 
-<head class="h-100">
-  <title>My Projects</title>
-  <meta charset="utf-8">
+<head>
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" 
-      type="image/png" 
-      href="https://avatars.githubusercontent.com/u/76852105?s=16&amp;v=4">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
-    integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+  <title>Bobby's Page</title>
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+  <link href="css/style.css" rel="stylesheet">
 </head>
 
-<body class="m-3">
-  <h1 >backsideodawn's homepage</h1>
-  <ul>
-    <dd>- <a href="/csscolorfinder">CSS Color Finder</a></dd>
-    <dd>- <a href="/linearregression">Buggy Linear Regression</a></dd>
-    <dd>- <a href="/lost-in-migration-game">Lost in Migration Game</a></dd>
-    <dd>- <a href="/n-gram-model">N-gram Model</a></dd>
-    <dd>- <a href="https://codepen.io/backsideofdawn/pen/zYbqMdE">Polynomial Regression</a></dd>
-    <dd>- <a href="https://backsideofdawn.github.io/k-means-image-compression/">Image Compression with k-means Clustering Algorithm</a></dd>
-  </ul>
-
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
-    crossorigin="anonymous"></script>
-    <script>
-      const colorTheme = window.matchMedia('(prefers-color-scheme: dark)').matches
-  ? 'dark'
-  : 'light';
-
-document.documentElement.setAttribute('data-bs-theme', colorTheme);
-      </script>
-  <footer style="position:absolute; bottom:0; margin: auto;"><p class="text-center m-2">Made by <a href="https://backsideofdawn.github.io">backsideofdawn</a></p></footer>
+<body>
+  <header>
+    <button id="theme-toggle">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><!--!Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M320 64C178.6 64 64 178.6 64 320C64 461.4 178.6 576 320 576C388.8 576 451.3 548.8 497.3 504.6C504.6 497.6 506.7 486.7 502.6 477.5C498.5 468.3 488.9 462.6 478.8 463.4C473.9 463.8 469 464 464 464C362.4 464 280 381.6 280 280C280 207.9 321.5 145.4 382.1 115.2C391.2 110.7 396.4 100.9 395.2 90.8C394 80.7 386.6 72.5 376.7 70.3C358.4 66.2 339.4 64 320 64z"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><!--!Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M210.2 53.9C217.6 50.8 226 51.7 232.7 56.1L320.5 114.3L408.3 56.1C415 51.7 423.4 50.9 430.8 53.9C438.2 56.9 443.4 63.5 445 71.3L465.9 174.5L569.1 195.4C576.9 197 583.5 202.4 586.5 209.7C589.5 217 588.7 225.5 584.3 232.2L526.1 320L584.3 407.8C588.7 414.5 589.5 422.9 586.5 430.3C583.5 437.7 576.9 443.1 569.1 444.6L465.8 465.4L445 568.7C443.4 576.5 438 583.1 430.7 586.1C423.4 589.1 414.9 588.3 408.2 583.9L320.4 525.7L232.6 583.9C225.9 588.3 217.5 589.1 210.1 586.1C202.7 583.1 197.3 576.5 195.8 568.7L175 465.4L71.7 444.5C63.9 442.9 57.3 437.5 54.3 430.2C51.3 422.9 52.1 414.4 56.5 407.7L114.7 320L56.5 232.2C52.1 225.5 51.3 217.1 54.3 209.7C57.3 202.3 63.9 196.9 71.7 195.4L175 174.6L195.9 71.3C197.5 63.5 202.9 56.9 210.2 53.9zM239.6 320C239.6 275.6 275.6 239.6 320 239.6C364.4 239.6 400.4 275.6 400.4 320C400.4 364.4 364.4 400.4 320 400.4C275.6 400.4 239.6 364.4 239.6 320zM448.4 320C448.4 249.1 390.9 191.6 320 191.6C249.1 191.6 191.6 249.1 191.6 320C191.6 390.9 249.1 448.4 320 448.4C390.9 448.4 448.4 390.9 448.4 320z"/></svg>
+    </button>
+    <h1>bobby sills</h1>
+    <h3>my portfolio</h3>
+  </header>
+  <nav>
+    <a href="#about" onclick="showSection('about'); return false;" class="active">about me</a>
+    <a href="#blog" onclick="showSection('blog'); return false;">blog</a>
+    <a href="#projects" onclick="showSection('projects'); return false;">projects</a>
+  </nav>
+  
+  <main>
+    <section id="about" class="content-section active">
+      <h2>about me</h2>
+      <p>I'm Bobby, a developer who's passionate about creating fun and interesting applications for the world to use. </p>
+    </section>
+    
+    <section id="blog" class="content-section">
+      <h2>blog</h2>
+      <p>Coming soon...</p>
+    </section>
+    
+    <section id="projects" class="content-section">
+      <h2>projects</h2>
+      <ul>
+        <li><a href="https://bobby-sills.github.io/csscolorfinder">CSS Color Finder</a></li>
+        <li><a href="https://bobby-sills.github.io/linearregression">Buggy Linear Regression</a></li>
+        <li><a href="https://bobby-sills.github.io/lost-in-migration-game">Lost in Migration Game</a></li>
+        <li><a href="https://bobby-sills.github.io/n-gram-model">N-gram Model</a></li>
+        <li><a href="https://codepen.io/backsideofdawn/pen/zYbqMdE">Polynomial Regression</a></li>
+        <li><a href="https://bobby-sills.github.io/k-means-image-compression/">Image Compression with k-means Clustering Algorithm</a></li>
+      </ul>
+    </section>
+  </main>
+  
+  <script>
+    document.getElementById('theme-toggle').addEventListener('click', function() {
+      const html = document.documentElement;
+      const currentTheme = html.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      html.setAttribute('data-theme', newTheme);
+    });
+    
+    function showSection(sectionId, updateHistory = true) {
+      // Hide all sections
+      const sections = document.querySelectorAll('.content-section');
+      sections.forEach(section => section.classList.remove('active'));
+      
+      // Remove active class from all nav links
+      const navLinks = document.querySelectorAll('nav a');
+      navLinks.forEach(link => link.classList.remove('active'));
+      
+      // Show selected section
+      document.getElementById(sectionId).classList.add('active');
+      
+      // Add active class to corresponding nav link
+      const activeLink = document.querySelector(`nav a[onclick="showSection('${sectionId}')"]`);
+      if (activeLink) {
+        activeLink.classList.add('active');
+      }
+      
+      // Update URL without page reload
+      if (updateHistory) {
+        const newUrl = `#${sectionId}`;
+        window.location.hash = sectionId;
+      }
+    }
+    
+    // Handle browser back/forward navigation and hash changes
+    window.addEventListener('hashchange', function() {
+      const section = getInitialSection();
+      showSection(section, false);
+    });
+    
+    // Get initial section from URL
+    function getInitialSection() {
+      const hash = window.location.hash.substring(1);
+      return hash && ['about', 'blog', 'projects'].includes(hash) ? hash : 'about';
+    }
+    
+    // Initialize the correct section on page load
+    document.addEventListener('DOMContentLoaded', function() {
+      const initialSection = getInitialSection();
+      showSection(initialSection, false);
+    });
+  </script>
 </body>
 
 </html>
