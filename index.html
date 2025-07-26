@@ -4,8 +4,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Bobby's Page</title>
-  <link rel="icon" type="image/png" href="assets/favicon.png">
+  <title>Bobby Sills</title>
+  <link rel="icon" type="image/png" href="assets/favicon-dark.png">
   <link href="css/style.css" rel="stylesheet">
 </head>
 
@@ -49,6 +49,12 @@
   </main>
   
   <script>
+    // Update favicon based on theme
+    function updateFavicon(theme) {
+      const favicon = document.querySelector('link[rel="icon"]');
+      favicon.href = theme === 'dark' ? 'assets/favicon-dark.png' : 'assets/favicon-light.png';
+    }
+
     // Load saved theme or default to browser preference
     function loadTheme() {
       const savedTheme = localStorage.getItem('theme');
@@ -62,6 +68,7 @@
       }
       
       document.documentElement.setAttribute('data-theme', theme);
+      updateFavicon(theme);
     }
     
     // Save theme to localStorage
@@ -77,6 +84,7 @@
       const currentTheme = html.getAttribute('data-theme');
       const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
       html.setAttribute('data-theme', newTheme);
+      updateFavicon(newTheme);
       saveTheme(newTheme);
     });
     
