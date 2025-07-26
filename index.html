@@ -49,11 +49,35 @@
   </main>
   
   <script>
+    // Load saved theme or default to browser preference
+    function loadTheme() {
+      const savedTheme = localStorage.getItem('theme');
+      let theme;
+      
+      if (savedTheme) {
+        theme = savedTheme;
+      } else {
+        // Default to browser's preferred color scheme
+        theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      }
+      
+      document.documentElement.setAttribute('data-theme', theme);
+    }
+    
+    // Save theme to localStorage
+    function saveTheme(theme) {
+      localStorage.setItem('theme', theme);
+    }
+    
+    // Load theme on page load
+    loadTheme();
+    
     document.getElementById('theme-toggle').addEventListener('click', function() {
       const html = document.documentElement;
       const currentTheme = html.getAttribute('data-theme');
       const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
       html.setAttribute('data-theme', newTheme);
+      saveTheme(newTheme);
     });
     
     function showSection(sectionId, updateHistory = true) {
