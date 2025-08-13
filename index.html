@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en">
 
 <head>
   <meta charset="UTF-8">
@@ -7,6 +7,27 @@
   <title>Bobby Sills</title>
   <link rel="icon" type="image/png" href="assets/favicon-dark.png">
   <link href="css/style.css" rel="stylesheet">
+  <script>
+    // Load theme immediately to prevent flash
+    (function() {
+      const savedTheme = localStorage.getItem('theme');
+      let theme;
+      
+      if (savedTheme) {
+        theme = savedTheme;
+      } else {
+        theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      }
+      
+      document.documentElement.setAttribute('data-theme', theme);
+      
+      // Update favicon
+      const favicon = document.querySelector('link[rel="icon"]');
+      if (favicon) {
+        favicon.href = theme === 'dark' ? 'assets/favicon-dark.png' : 'assets/favicon-light.png';
+      }
+    })();
+  </script>
 </head>
 
 <body>
@@ -19,7 +40,7 @@
     <h3>my portfolio</h3>
   </header>
   <nav>
-    <a href="#about" onclick="showSection('about'); return false;" class="active">about me</a>
+    <a href="#about" onclick="showSection('about'); return false;">about me</a>
     <a href="#blog" onclick="showSection('blog'); return false;">blog</a>
     <a href="#projects" onclick="showSection('projects'); return false;">projects</a>
   </nav>
@@ -27,12 +48,17 @@
   <main>
     <section id="about" class="content-section active">
       <h2>about me</h2>
-      <p>I'm Bobby, a developer who's passionate about creating fun and interesting applications for the world to use. </p>
+      <p>I'm Bobby, a 9th grader living in Vientiane, Laos. In my spare time I love coding (currently working on a language learning app), learning languages (maybe related), customizing my arch rice, and learning even more topics to love.</p>
     </section>
     
     <section id="blog" class="content-section">
-      <h2>blog</h2>
-      <p>Coming soon...</p>
+      <h2><a href="#" onclick="showBlogList(); return false;" style="text-decoration: none; color: inherit;">blog</a></h2>
+      <div id="blog-list">
+      </div>
+      <div id="blog-post" style="display: none;">
+        <div id="post-content"></div>
+        <div id="comments"></div>
+      </div>
     </section>
     
     <section id="projects" class="content-section">
@@ -54,30 +80,11 @@
       const favicon = document.querySelector('link[rel="icon"]');
       favicon.href = theme === 'dark' ? 'assets/favicon-dark.png' : 'assets/favicon-light.png';
     }
-
-    // Load saved theme or default to browser preference
-    function loadTheme() {
-      const savedTheme = localStorage.getItem('theme');
-      let theme;
-      
-      if (savedTheme) {
-        theme = savedTheme;
-      } else {
-        // Default to browser's preferred color scheme
-        theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-      }
-      
-      document.documentElement.setAttribute('data-theme', theme);
-      updateFavicon(theme);
-    }
     
     // Save theme to localStorage
     function saveTheme(theme) {
       localStorage.setItem('theme', theme);
     }
-    
-    // Load theme on page load
-    loadTheme();
     
     document.getElementById('theme-toggle').addEventListener('click', function() {
       const html = document.documentElement;
@@ -111,17 +118,48 @@
         const newUrl = `#${sectionId}`;
         window.location.hash = sectionId;
       }
+      
+      // Load blog posts when navigating to blog section
+      if (sectionId === 'blog' && blogPosts.length === 0) {
+        loadBlogPosts();
+      }
     }
     
     // Handle browser back/forward navigation and hash changes
     window.addEventListener('hashchange', function() {
       const section = getInitialSection();
       showSection(section, false);
+      
+      // Handle direct links to blog posts
+      const hash = window.location.hash.substring(1);
+      if (hash.startsWith('blog/') && blogPosts.length > 0) {
+        const postId = hash.substring(5);
+        loadBlogPost(postId);
+      } else if (hash === 'blog') {
+        showBlogList();
+      }
+    });
+    
+    // Handle browser back/forward navigation
+    window.addEventListener('popstate', function() {
+      const hash = window.location.hash.substring(1);
+      const section = getInitialSection();
+      showSection(section, false);
+      
+      if (hash.startsWith('blog/') && blogPosts.length > 0) {
+        const postId = hash.substring(5);
+        loadBlogPost(postId);
+      } else if (hash === 'blog') {
+        showBlogList();
+      }
     });
     
     // Get initial section from URL
     function getInitialSection() {
       const hash = window.location.hash.substring(1);
+      if (hash.startsWith('blog')) {
+        return 'blog';
+      }
       return hash && ['about', 'blog', 'projects'].includes(hash) ? hash : 'about';
     }
     
@@ -129,7 +167,122 @@
     document.addEventListener('DOMContentLoaded', function() {
       const initialSection = getInitialSection();
       showSection(initialSection, false);
+      if (initialSection === 'blog') {
+        loadBlogPosts().then(() => {
+          const hash = window.location.hash.substring(1);
+          if (hash.startsWith('blog/')) {
+            const postId = hash.substring(5);
+            loadBlogPost(postId);
+          }
+        });
+      }
     });
+
+    // Blog functionality
+    let blogPosts = [];
+    
+    async function loadBlogPosts() {
+      const blogList = document.getElementById('blog-list');
+      
+      // Show loading text after 2 seconds if still loading
+      const loadingTimeout = setTimeout(() => {
+        if (blogList.innerHTML === '') {
+          blogList.innerHTML = '<p>Loading posts...</p>';
+        }
+      }, 2000);
+      
+      try {
+        const response = await fetch('posts/posts.json');
+        blogPosts = await response.json();
+        clearTimeout(loadingTimeout);
+        displayBlogList();
+      } catch (error) {
+        clearTimeout(loadingTimeout);
+        blogList.innerHTML = '<p>Error loading blog posts.</p>';
+      }
+    }
+    
+    function displayBlogList() {
+      const blogList = document.getElementById('blog-list');
+      if (blogPosts.length === 0) {
+        blogList.innerHTML = '<p>Nothing here yet!</p>';
+        return;
+      }
+      
+      const postsHTML = blogPosts.map(post => `
+        <article class="blog-post-preview">
+          <h3><a href="#" onclick="loadBlogPost('${post.id}'); return false;">${post.title}</a></h3>
+          <p class="post-date">${new Date(post.date).toLocaleDateString()}</p>
+          <p class="post-excerpt">${post.excerpt}</p>
+        </article>
+      `).join('');
+      
+      blogList.innerHTML = postsHTML;
+    }
+    
+    async function loadBlogPost(postId) {
+      const post = blogPosts.find(p => p.id === postId);
+      if (!post) return;
+      
+      try {
+        const response = await fetch(`posts/${post.file}`);
+        const markdown = await response.text();
+        const html = markdownToHtml(markdown);
+        
+        document.getElementById('post-content').innerHTML = html;
+        document.getElementById('blog-list').style.display = 'none';
+        document.getElementById('blog-post').style.display = 'block';
+        
+        // Load comments
+        loadComments(postId);
+        
+        // Update URL
+        window.history.pushState({}, '', `#blog/${postId}`);
+      } catch (error) {
+        alert('Error loading blog post.');
+      }
+    }
+    
+    function showBlogList() {
+      document.getElementById('blog-list').style.display = 'block';
+      document.getElementById('blog-post').style.display = 'none';
+      window.history.pushState({}, '', '#blog');
+    }
+    
+    // Simple markdown to HTML converter
+    function markdownToHtml(markdown) {
+      return markdown
+        .replace(/^# (.+)$/gm, '<h1>$1</h1>')
+        .replace(/^## (.+)$/gm, '<h2>$1</h2>')
+        .replace(/^### (.+)$/gm, '<h3>$1</h3>')
+        .replace(/^\*(.+)\*$/gm, '<p><em>$1</em></p>')
+        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*(.+?)\*/g, '<em>$1</em>')
+        .replace(/^\d+\. (.+)$/gm, '<li>$1</li>')
+        .replace(/^- (.+)$/gm, '<li>$1</li>')
+        .replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>')
+        .replace(/^(.+)$/gm, function(match) {
+          if (match.startsWith('<h') || match.startsWith('<ul') || match.startsWith('<li') || match.startsWith('<p><em>')) {
+            return match;
+          }
+          return match.trim() ? `<p>${match}</p>` : '';
+        })
+        .replace(/\n\n+/g, '\n');
+    }
+    
+    function loadComments(postId) {
+      const commentsDiv = document.getElementById('comments');
+      commentsDiv.innerHTML = `
+        <script src="https://utteranc.es/client.js"
+                repo="bobby-sills/bobby-sills.github.io"
+                issue-term="pathname"
+                label="blog-comment"
+                theme="gruvbox-dark"
+                crossorigin="anonymous"
+                async>
+        </sc` + `ript>
+      `;
+    }
   </script>
 </body>
 
